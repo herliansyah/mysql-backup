@@ -185,68 +185,161 @@ class BackupTool {
             }
         } catch (error) {
             this.hideLoading();
-            this.showAlert('danger', 'Terjadi kesalahan saat memuat objek database.');
+            this.showAlert('danger', 'Terjadi kesalahan saat memuat objek database: ' + error.message);
         }
     }
 
     populateObjectLists(data) {
+        // Ensure data exists and has proper structure
+        if (!data) {
+            this.showAlert('danger', 'Tidak ada data yang diterima dari server');
+            return;
+        }
+
+        // Initialize arrays if they don't exist
+        data.tables = data.tables || [];
+        data.views = data.views || [];
+        data.triggers = data.triggers || [];
+        data.procedures = data.procedures || [];
+        data.functions = data.functions || [];
+        
         // Populate tables
-        const tablesHtml = data.tables.map(table => `
-            <div class="form-check">
-                <input class="form-check-input table-checkbox" type="checkbox" value="${table.name}" id="table-${table.name}">
-                <label class="form-check-label" for="table-${table.name}">
-                    ${table.name} <small class="text-muted">(${table.rows} rows)</small>
-                </label>
-            </div>
-        `).join('');
-        $('#tables-list').html(tablesHtml);
+        if (data.tables && data.tables.length > 0) {
+            const tablesHtml = data.tables.map(table => `
+                <div class="form-check object-item">
+                    <input class="form-check-input table-checkbox" type="checkbox" value="${table.name || ''}" id="table-${table.name || 'unknown'}">
+                    <label class="form-check-label" for="table-${table.name || 'unknown'}">
+                        <i class="fas fa-table text-primary me-2"></i>
+                        <strong>${table.name || 'Unknown Table'}</strong>
+                        <br>
+                        <small class="text-muted">
+                            ${formatNumber(table.rows || 0)} rows | ${formatBytes(table.size || 0)}
+                            ${table.comment ? ' | ' + table.comment : ''}
+                        </small>
+                    </label>
+                </div>
+            `).join('');
+            $('#tables-list').html(tablesHtml);
+        } else {
+            $('#tables-list').html('<p class="text-muted text-center py-3"><i class="fas fa-info-circle"></i> Tidak ada tabel ditemukan</p>');
+        }
 
         // Populate views
-        const viewsHtml = data.views.map(view => `
-            <div class="form-check">
-                <input class="form-check-input view-checkbox" type="checkbox" value="${view.name}" id="view-${view.name}">
-                <label class="form-check-label" for="view-${view.name}">
-                    ${view.name}
-                </label>
-            </div>
-        `).join('');
-        $('#views-list').html(viewsHtml);
+        if (data.views && data.views.length > 0) {
+            const viewsHtml = data.views.map(view => `
+                <div class="form-check object-item">
+                    <input class="form-check-input view-checkbox" type="checkbox" value="${view.name}" id="view-${view.name}">
+                    <label class="form-check-label" for="view-${view.name}">
+                        <i class="fas fa-eye text-info me-2"></i>
+                        <strong>${view.name}</strong>
+                        <br>
+                        <small class="text-muted">
+                            ${view.is_updatable === 'YES' ? 'Updatable' : 'Read-only'} view
+                        </small>
+                    </label>
+                </div>
+            `).join('');
+            $('#views-list').html(viewsHtml);
+        } else {
+            $('#views-list').html('<p class="text-muted text-center py-3"><i class="fas fa-info-circle"></i> Tidak ada view ditemukan</p>');
+        }
 
         // Populate triggers
-        const triggersHtml = data.triggers.map(trigger => `
-            <div class="form-check">
-                <input class="form-check-input trigger-checkbox" type="checkbox" value="${trigger.name}" id="trigger-${trigger.name}">
-                <label class="form-check-label" for="trigger-${trigger.name}">
-                    ${trigger.name} <small class="text-muted">(${trigger.table})</small>
-                </label>
-            </div>
-        `).join('');
-        $('#triggers-list').html(triggersHtml);
+        if (data.triggers && data.triggers.length > 0) {
+            const triggersHtml = data.triggers.map(trigger => `
+                <div class="form-check object-item">
+                    <input class="form-check-input trigger-checkbox" type="checkbox" value="${trigger.name}" id="trigger-${trigger.name}">
+                    <label class="form-check-label" for="trigger-${trigger.name}">
+                        <i class="fas fa-bolt text-warning me-2"></i>
+                        <strong>${trigger.name}</strong>
+                        <br>
+                        <small class="text-muted">
+                            ${trigger.timing} ${trigger.event} on ${trigger.table}
+                        </small>
+                    </label>
+                </div>
+            `).join('');
+            $('#triggers-list').html(triggersHtml);
+        } else {
+            $('#triggers-list').html('<p class="text-muted text-center py-3"><i class="fas fa-info-circle"></i> Tidak ada trigger ditemukan</p>');
+        }
 
         // Populate procedures
-        const proceduresHtml = data.procedures.map(procedure => `
-            <div class="form-check">
-                <input class="form-check-input procedure-checkbox" type="checkbox" value="${procedure.name}" id="procedure-${procedure.name}">
-                <label class="form-check-label" for="procedure-${procedure.name}">
-                    ${procedure.name} <small class="text-muted">(${procedure.type})</small>
-                </label>
-            </div>
-        `).join('');
-        $('#procedures-list').html(proceduresHtml);
+        if (data.procedures && data.procedures.length > 0) {
+            const proceduresHtml = data.procedures.map(procedure => `
+                <div class="form-check object-item">
+                    <input class="form-check-input procedure-checkbox" type="checkbox" value="${procedure.name}" id="procedure-${procedure.name}">
+                    <label class="form-check-label" for="procedure-${procedure.name}">
+                        <i class="fas fa-cogs text-success me-2"></i>
+                        <strong>${procedure.name}</strong>
+                        <br>
+                        <small class="text-muted">
+                            Stored ${procedure.type.toLowerCase()}
+                        </small>
+                    </label>
+                </div>
+            `).join('');
+            $('#procedures-list').html(proceduresHtml);
+        } else {
+            $('#procedures-list').html('<p class="text-muted text-center py-3"><i class="fas fa-info-circle"></i> Tidak ada procedure ditemukan</p>');
+        }
 
         // Populate functions
-        const functionsHtml = data.functions.map(func => `
-            <div class="form-check">
-                <input class="form-check-input function-checkbox" type="checkbox" value="${func.name}" id="function-${func.name}">
-                <label class="form-check-label" for="function-${func.name}">
-                    ${func.name} <small class="text-muted">(${func.data_type})</small>
-                </label>
-            </div>
-        `).join('');
-        $('#functions-list').html(functionsHtml);
+        if (data.functions && data.functions.length > 0) {
+            const functionsHtml = data.functions.map(func => `
+                <div class="form-check object-item">
+                    <input class="form-check-input function-checkbox" type="checkbox" value="${func.name}" id="function-${func.name}">
+                    <label class="form-check-label" for="function-${func.name}">
+                        <i class="fas fa-code text-danger me-2"></i>
+                        <strong>${func.name}</strong>
+                        <br>
+                        <small class="text-muted">
+                            Returns ${func.data_type}
+                        </small>
+                    </label>
+                </div>
+            `).join('');
+            $('#functions-list').html(functionsHtml);
+        } else {
+            $('#functions-list').html('<p class="text-muted text-center py-3"><i class="fas fa-info-circle"></i> Tidak ada function ditemukan</p>');
+        }
 
         // Store data for later use
         this.databaseObjects = data;
+        
+        // Show summary
+        this.showObjectSummary(data);
+    }
+
+    showObjectSummary(data) {
+        const summary = `
+            <div class="alert alert-info mt-3">
+                <h6><i class="fas fa-info-circle"></i> Ringkasan Database</h6>
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="list-unstyled mb-0">
+                            <li><strong>Tabel:</strong> ${data.tables ? data.tables.length : 0}</li>
+                            <li><strong>Views:</strong> ${data.views ? data.views.length : 0}</li>
+                            <li><strong>Triggers:</strong> ${data.triggers ? data.triggers.length : 0}</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-unstyled mb-0">
+                            <li><strong>Procedures:</strong> ${data.procedures ? data.procedures.length : 0}</li>
+                            <li><strong>Functions:</strong> ${data.functions ? data.functions.length : 0}</li>
+                            <li><strong>Database:</strong> ${this.connectionData.database}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Add summary after the object selection area
+        if ($('.object-summary').length === 0) {
+            $('#step-2 .card-body').append('<div class="object-summary">' + summary + '</div>');
+        } else {
+            $('.object-summary').html(summary);
+        }
     }
 
     toggleSelectAll(type, checked) {
@@ -289,7 +382,7 @@ class BackupTool {
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="data-option-${tableName}" value="all" id="all-${tableName}" checked>
                                     <label class="form-check-label" for="all-${tableName}">
-                                        Semua data (${tableData.rows} rows)
+                                        Semua data (${formatNumber(tableData.rows)} rows)
                                     </label>
                                 </div>
                             </div>

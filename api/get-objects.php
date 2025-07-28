@@ -46,10 +46,10 @@ try {
     $stmt = $pdo->prepare("
         SELECT 
             TABLE_NAME as name,
-            TABLE_ROWS as rows,
-            DATA_LENGTH as data_length,
-            INDEX_LENGTH as index_length,
-            TABLE_COMMENT as comment
+            IFNULL(TABLE_ROWS, 0) as table_rows,
+            IFNULL(DATA_LENGTH, 0) as data_length,
+            IFNULL(INDEX_LENGTH, 0) as index_length,
+            IFNULL(TABLE_COMMENT, '') as comment
         FROM information_schema.TABLES 
         WHERE TABLE_SCHEMA = ? 
         AND TABLE_TYPE = 'BASE TABLE'
@@ -61,9 +61,9 @@ try {
     foreach ($tables as $table) {
         $result['tables'][] = [
             'name' => $table['name'],
-            'rows' => (int)$table['rows'],
-            'size' => (int)$table['data_length'] + (int)$table['index_length'],
-            'comment' => $table['comment']
+            'rows' => (int)($table['table_rows'] ?? 0),
+            'size' => (int)($table['data_length'] ?? 0) + (int)($table['index_length'] ?? 0),
+            'comment' => $table['comment'] ?? ''
         ];
     }
 
