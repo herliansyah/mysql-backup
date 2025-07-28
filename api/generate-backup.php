@@ -36,6 +36,7 @@ try {
     // Set options
     $generator->setIncludeStructure($options['includeStructure'] ?? true);
     $generator->setIncludeData($options['includeData'] ?? true);
+    $generator->setCompressBackup($options['compressBackup'] ?? false);
     $generator->setTableDataOptions($options['tableDataOptions'] ?? []);
 
     // Generate backup

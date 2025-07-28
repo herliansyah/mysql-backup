@@ -14,6 +14,7 @@ class BackupTool {
         this.backupOptions = {
             includeStructure: true,
             includeData: true,
+            compressBackup: false,
             tableDataOptions: {}
         };
         
@@ -61,6 +62,10 @@ class BackupTool {
         $('#include-data').on('change', (e) => {
             this.backupOptions.includeData = e.target.checked;
             this.toggleDataOptions(e.target.checked);
+        });
+
+        $('#compress-backup').on('change', (e) => {
+            this.backupOptions.compressBackup = e.target.checked;
         });
 
         // Generate backup
@@ -517,7 +522,8 @@ class BackupTool {
             procedures: this.selectedObjects.procedures.length,
             functions: this.selectedObjects.functions.length,
             includeStructure: this.backupOptions.includeStructure,
-            includeData: this.backupOptions.includeData
+            includeData: this.backupOptions.includeData,
+            compressBackup: this.backupOptions.compressBackup
         };
 
         const summaryHtml = `
@@ -553,6 +559,10 @@ class BackupTool {
                 <span class="summary-label">Sertakan Data:</span>
                 <span class="summary-value">${summary.includeData ? 'Ya' : 'Tidak'}</span>
             </div>
+            <div class="summary-item">
+                <span class="summary-label">Kompresi ZIP:</span>
+                <span class="summary-value">${summary.compressBackup ? 'Ya' : 'Tidak'}</span>
+            </div>
         `;
 
         $('#backup-summary-content').html(summaryHtml);
@@ -584,6 +594,7 @@ class BackupTool {
             options: {
                 includeStructure: this.backupOptions.includeStructure,
                 includeData: this.backupOptions.includeData,
+                compressBackup: this.backupOptions.compressBackup,
                 tableDataOptions: tableDataOptions
             }
         };

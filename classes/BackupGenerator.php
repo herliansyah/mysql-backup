@@ -5,6 +5,7 @@ class BackupGenerator {
     private $database;
     private $includeStructure = true;
     private $includeData = true;
+    private $compressBackup = false;
     private $tableDataOptions = [];
     private $output = '';
 
@@ -42,6 +43,10 @@ class BackupGenerator {
 
     public function setTableDataOptions($options) {
         $this->tableDataOptions = $options;
+    }
+
+    public function setCompressBackup($compress) {
+        $this->compressBackup = $compress;
     }
 
     public function generateBackup($objects) {
@@ -305,15 +310,40 @@ class BackupGenerator {
 
         // Generate filename
         $timestamp = date('Y-m-d_H-i-s');
-        $filename = "backup_{$this->database}_{$timestamp}.sql";
-        $filepath = $downloadsDir . '/' . $filename;
+        $sqlFilename = "backup_{$this->database}_{$timestamp}.sql";
+        $sqlFilepath = $downloadsDir . '/' . $sqlFilename;
 
-        // Save file
-        if (file_put_contents($filepath, $this->output) === false) {
+        // Save SQL file
+        if (file_put_contents($sqlFilepath, $this->output) === false) {
             throw new Exception('Gagal menyimpan file backup');
         }
 
-        return $filename;
+        // If compression is enabled, create ZIP file
+        if ($this->compressBackup) {
+            $zipFilename = "backup_{$this->database}_{$timestamp}.zip";
+            $zipFilepath = $downloadsDir . '/' . $zipFilename;
+
+            // Check if ZipArchive is available
+            if (!class_exists('ZipArchive')) {
+                throw new Exception('ZipArchive extension tidak tersedia. Backup disimpan sebagai file SQL.');
+            }
+
+            $zip = new ZipArchive();
+            if ($zip->open($zipFilepath, ZipArchive::CREATE) !== TRUE) {
+                throw new Exception('Gagal membuat file ZIP');
+            }
+
+            // Add SQL file to ZIP
+            $zip->addFile($sqlFilepath, $sqlFilename);
+            $zip->close();
+
+            // Delete original SQL file
+            unlink($sqlFilepath);
+
+            return $zipFilename;
+        }
+
+        return $sqlFilename;
     }
 }
 ?>

@@ -11,7 +11,7 @@ define('APP_AUTHOR', 'Herliansyah');
 // File settings
 define('BACKUP_DIR', __DIR__ . '/../downloads/');
 define('MAX_FILE_SIZE', 100 * 1024 * 1024); // 100MB
-define('ALLOWED_EXTENSIONS', ['sql']);
+define('ALLOWED_EXTENSIONS', ['sql', 'zip']);
 
 // Database settings
 define('DEFAULT_PORT', 3306);
@@ -127,6 +127,7 @@ function getFileMimeType($filename) {
     
     $mimeTypes = [
         'sql' => 'application/sql',
+        'zip' => 'application/zip',
         'txt' => 'text/plain'
     ];
     

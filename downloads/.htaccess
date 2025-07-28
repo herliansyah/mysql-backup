@@ -1,25 +1,27 @@
 # Protect downloads directory
 Options -Indexes
 
-# Allow only SQL files to be downloaded
-<FilesMatch "\.(sql)$">
+# Allow only SQL and ZIP files to be downloaded
+<FilesMatch "\.(sql|zip)$">
     Order allow,deny
     Allow from all
 </FilesMatch>
 
 # Deny access to other file types
-<FilesMatch "\.(?!sql$)[^.]+$">
+<FilesMatch "\.(?!(sql|zip)$)[^.]+$">
     Order allow,deny
     Deny from all
 </FilesMatch>
 
-# Set proper MIME type for SQL files
+# Set proper MIME type for files
 <IfModule mod_mime.c>
     AddType application/sql .sql
     AddType text/plain .sql
+    AddType application/zip .zip
+    AddType application/octet-stream .zip
 </IfModule>
 
-# Force download for SQL files
-<FilesMatch "\.sql$">
+# Force download for backup files
+<FilesMatch "\.(sql|zip)$">
     Header set Content-Disposition "attachment"
 </FilesMatch>

@@ -197,7 +197,7 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="option-card">
                                         <h6>Struktur Database</h6>
                                         <div class="form-check form-switch">
@@ -208,7 +208,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="option-card">
                                         <h6>Data Tabel</h6>
                                         <div class="form-check form-switch">
@@ -217,6 +217,18 @@
                                                 Sertakan data tabel
                                             </label>
                                         </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="option-card">
+                                        <h6>Kompresi File</h6>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="compress-backup">
+                                            <label class="form-check-label" for="compress-backup">
+                                                Kompress ke ZIP
+                                            </label>
+                                        </div>
+                                        <small class="text-muted">Menghemat ukuran file backup</small>
                                     </div>
                                 </div>
                             </div>
