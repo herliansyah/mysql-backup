@@ -372,6 +372,45 @@ class BackupTool {
 
     setupBackupOptions() {
         if (this.selectedObjects.tables.length > 0) {
+            // Add Apply All controls
+            const applyAllHtml = `
+                <div class="apply-all-section mb-4 p-3 border rounded bg-light">
+                    <h6><i class="fas fa-magic"></i> Apply to All Tables</h6>
+                    <div class="row align-items-end">
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="apply-all-option" value="all" id="apply-all-data" checked>
+                                <label class="form-check-label" for="apply-all-data">
+                                    Semua data
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="apply-all-option" value="limit" id="apply-all-limit">
+                                <label class="form-check-label" for="apply-all-limit">
+                                    Batasi jumlah
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" class="form-control" placeholder="Rows" min="1" value="10" id="apply-all-value" disabled>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-primary btn-sm" id="apply-to-all">
+                                <i class="fas fa-check"></i> Apply All
+                            </button>
+                        </div>
+                    </div>
+                    <small class="text-muted">
+                        Terapkan pengaturan yang sama ke semua tabel yang dipilih. 
+                        <br><strong>Catatan:</strong> Jika jumlah rows yang diset lebih besar dari data tabel, akan menggunakan jumlah maksimal rows tabel tersebut.
+                    </small>
+                </div>
+            `;
+            
+            $('#table-data-options').html(applyAllHtml);
+            
             const tableOptionsHtml = this.selectedObjects.tables.map(tableName => {
                 const tableData = this.databaseObjects.tables.find(t => t.name === tableName);
                 return `
@@ -404,7 +443,7 @@ class BackupTool {
                 `;
             }).join('');
 
-            $('#table-data-options').html(tableOptionsHtml);
+            $('#table-data-options').append(tableOptionsHtml);
 
             // Handle limit option toggle
             $('input[type="radio"][value="limit"]').on('change', function() {
@@ -415,6 +454,49 @@ class BackupTool {
             $('input[type="radio"][value="all"]').on('change', function() {
                 const tableName = this.name.replace('data-option-', '');
                 $(`#limit-value-${tableName}`).closest('.limit-input').hide();
+            });
+
+            // Handle Apply All functionality
+            $('#apply-all-limit').on('change', function() {
+                if (this.checked) {
+                    $('#apply-all-value').prop('disabled', false);
+                } else {
+                    $('#apply-all-value').prop('disabled', true);
+                }
+            });
+
+            $('#apply-all-data').on('change', function() {
+                if (this.checked) {
+                    $('#apply-all-value').prop('disabled', true);
+                }
+            });
+
+            $('#apply-to-all').on('click', () => {
+                const applyOption = $('input[name="apply-all-option"]:checked').val();
+                const applyValue = parseInt($('#apply-all-value').val()) || 10;
+
+                this.selectedObjects.tables.forEach(tableName => {
+                    const tableData = this.databaseObjects.tables.find(t => t.name === tableName);
+                    const maxRows = tableData ? tableData.rows : 0;
+
+                    if (applyOption === 'all') {
+                        // Set to "Semua data"
+                        $(`#all-${tableName}`).prop('checked', true);
+                        $(`#limit-value-${tableName}`).closest('.limit-input').hide();
+                    } else {
+                        // Set to "Batasi jumlah"
+                        $(`#limit-${tableName}`).prop('checked', true);
+                        
+                        // Use minimum between apply value and table's max rows
+                        const finalValue = Math.min(applyValue, maxRows);
+                        $(`#limit-value-${tableName}`).val(finalValue);
+                        $(`#limit-value-${tableName}`).closest('.limit-input').show();
+                    }
+                });
+
+                // Show success message with details
+                const appliedValue = applyOption === 'all' ? 'semua data' : `maksimal ${applyValue} rows (disesuaikan per tabel)`;
+                this.showAlert('success', `Pengaturan "${appliedValue}" berhasil diterapkan ke ${this.selectedObjects.tables.length} tabel`);
             });
         }
     }
