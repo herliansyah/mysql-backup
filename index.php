@@ -228,7 +228,6 @@
                                                 Kompress ke ZIP
                                             </label>
                                         </div>
-                                        <small class="text-muted">Menghemat ukuran file backup</small>
                                     </div>
                                 </div>
                             </div>
