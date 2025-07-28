@@ -9,39 +9,114 @@
     <link href="assets/css/style.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <div class="col-md-3 sidebar">
-                <div class="sidebar-header">
-                    <h4><i class="fas fa-database"></i> MySQL Backup</h4>
+    <!-- Modern Header -->
+    <header class="modern-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="app-brand">
+                    <div class="brand-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <div class="brand-text">
+                        <h1 class="brand-title">MySQL Backup Tool</h1>
+                        <p class="brand-subtitle">Professional Database Backup Solution</p>
+                    </div>
                 </div>
-                <div class="sidebar-menu">
-                    <div class="menu-item active" data-step="1">
-                        <i class="fas fa-server"></i>
-                        <span>Koneksi Database</span>
+                <div class="header-actions">
+                    <span class="version-badge">v1.0.0</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Modern Step Progress -->
+    <section class="step-progress-section">
+        <div class="container">
+            <div class="step-progress-wrapper">
+                <div class="step-progress">
+                    <div class="step-item active" data-step="1">
+                        <div class="step-number">
+                            <span class="step-icon">
+                                <i class="fas fa-server"></i>
+                            </span>
+                            <span class="step-count">1</span>
+                        </div>
+                        <div class="step-info">
+                            <h3 class="step-title">Database Connection</h3>
+                            <p class="step-description">Configure MySQL connection settings</p>
+                        </div>
+                        <div class="step-status">
+                            <i class="fas fa-check"></i>
+                        </div>
                     </div>
-                    <div class="menu-item" data-step="2">
-                        <i class="fas fa-table"></i>
-                        <span>Pilih Objek</span>
+                    
+                    <div class="step-connector">
+                        <div class="connector-line"></div>
                     </div>
-                    <div class="menu-item" data-step="3">
-                        <i class="fas fa-cog"></i>
-                        <span>Opsi Backup</span>
+                    
+                    <div class="step-item" data-step="2">
+                        <div class="step-number">
+                            <span class="step-icon">
+                                <i class="fas fa-table"></i>
+                            </span>
+                            <span class="step-count">2</span>
+                        </div>
+                        <div class="step-info">
+                            <h3 class="step-title">Select Objects</h3>
+                            <p class="step-description">Choose tables, views, and triggers</p>
+                        </div>
+                        <div class="step-status">
+                            <i class="fas fa-check"></i>
+                        </div>
                     </div>
-                    <div class="menu-item" data-step="4">
-                        <i class="fas fa-download"></i>
-                        <span>Generate Backup</span>
+                    
+                    <div class="step-connector">
+                        <div class="connector-line"></div>
+                    </div>
+                    
+                    <div class="step-item" data-step="3">
+                        <div class="step-number">
+                            <span class="step-icon">
+                                <i class="fas fa-cog"></i>
+                            </span>
+                            <span class="step-count">3</span>
+                        </div>
+                        <div class="step-info">
+                            <h3 class="step-title">Backup Options</h3>
+                            <p class="step-description">Configure backup preferences</p>
+                        </div>
+                        <div class="step-status">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="step-connector">
+                        <div class="connector-line"></div>
+                    </div>
+                    
+                    <div class="step-item" data-step="4">
+                        <div class="step-number">
+                            <span class="step-icon">
+                                <i class="fas fa-download"></i>
+                            </span>
+                            <span class="step-count">4</span>
+                        </div>
+                        <div class="step-info">
+                            <h3 class="step-title">Generate Backup</h3>
+                            <p class="step-description">Create and download backup file</p>
+                        </div>
+                        <div class="step-status">
+                            <i class="fas fa-check"></i>
+                        </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </section>
 
-            <!-- Main Content -->
-            <div class="col-md-9 main-content">
-                <div class="content-header">
-                    <h2>Database Backup Tool</h2>
-                    <p class="text-muted">Tool untuk backup database MySQL dengan opsi kustomisasi lengkap</p>
-                </div>
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <div class="container">
 
                 <!-- Step 1: Database Connection -->
                 <div class="step-content active" id="step-1">

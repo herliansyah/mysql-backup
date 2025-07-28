@@ -45,7 +45,7 @@ class BackupTool {
 
     bindEvents() {
         // Navigation events
-        $('.menu-item').on('click', (e) => {
+        $('.step-item').on('click', (e) => {
             const step = parseInt($(e.currentTarget).data('step'));
             if (step <= this.currentStep) {
                 this.goToStep(step);
@@ -92,21 +92,37 @@ class BackupTool {
     goToStep(step) {
         // Hide all steps
         $('.step-content').removeClass('active');
-        $('.menu-item').removeClass('active');
+        $('.step-item').removeClass('active completed');
 
         // Show target step
         $(`#step-${step}`).addClass('active');
-        $(`.menu-item[data-step="${step}"]`).addClass('active');
+        
+        // Update step progress
+        for (let i = 1; i <= step; i++) {
+            if (i < step) {
+                $(`.step-item[data-step="${i}"]`).addClass('completed');
+            } else if (i === step) {
+                $(`.step-item[data-step="${i}"]`).addClass('active');
+            }
+        }
 
         this.currentStep = step;
     }
 
     updateStepDisplay() {
         $('.step-content').removeClass('active');
-        $('.menu-item').removeClass('active');
+        $('.step-item').removeClass('active completed');
         
         $(`#step-${this.currentStep}`).addClass('active');
-        $(`.menu-item[data-step="${this.currentStep}"]`).addClass('active');
+        
+        // Update step progress
+        for (let i = 1; i <= this.currentStep; i++) {
+            if (i < this.currentStep) {
+                $(`.step-item[data-step="${i}"]`).addClass('completed');
+            } else if (i === this.currentStep) {
+                $(`.step-item[data-step="${i}"]`).addClass('active');
+            }
+        }
     }
 
     async validateAndProceed(currentStep) {
