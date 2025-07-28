@@ -17,6 +17,7 @@ class BackupTool {
             compressBackup: false,
             tableDataOptions: {}
         };
+        this.loadingTimeout = null;
         
         this.init();
     }
@@ -24,6 +25,22 @@ class BackupTool {
     init() {
         this.bindEvents();
         this.updateStepDisplay();
+        this.initModalEvents();
+    }
+
+    initModalEvents() {
+        // Ensure loading modal is properly handled
+        $(document).on('hidden.bs.modal', '#loadingModal', () => {
+            $('.modal-backdrop').remove();
+            $('body').removeClass('modal-open');
+            $('body').css('overflow', '');
+            $('body').css('padding-right', '');
+        });
+        
+        // Force hide on any click outside modal
+        $(document).on('click', '.modal-backdrop', () => {
+            this.hideLoading();
+        });
     }
 
     bindEvents() {
@@ -156,8 +173,6 @@ class BackupTool {
                 dataType: 'json'
             });
 
-            this.hideLoading();
-
             if (response.success) {
                 this.showAlert('success', 'Koneksi berhasil!');
                 this.connectionData = formData;
@@ -165,8 +180,9 @@ class BackupTool {
                 this.showAlert('danger', `Koneksi gagal: ${response.message}`);
             }
         } catch (error) {
-            this.hideLoading();
             this.showAlert('danger', 'Terjadi kesalahan saat menguji koneksi.');
+        } finally {
+            this.hideLoading();
         }
     }
 
@@ -181,16 +197,15 @@ class BackupTool {
                 dataType: 'json'
             });
 
-            this.hideLoading();
-
             if (response.success) {
                 this.populateObjectLists(response.data);
             } else {
                 this.showAlert('danger', `Gagal memuat objek database: ${response.message}`);
             }
         } catch (error) {
-            this.hideLoading();
             this.showAlert('danger', 'Terjadi kesalahan saat memuat objek database: ' + error.message);
+        } finally {
+            this.hideLoading();
         }
     }
 
@@ -620,16 +635,15 @@ class BackupTool {
                 }
             });
 
-            this.hideProgress();
-
             if (response.success) {
                 this.showSuccessState(response.filename);
             } else {
                 this.showAlert('danger', `Gagal generate backup: ${response.message}`);
             }
         } catch (error) {
-            this.hideProgress();
             this.showAlert('danger', 'Terjadi kesalahan saat generate backup.');
+        } finally {
+            this.hideProgress();
         }
     }
 
@@ -664,11 +678,93 @@ class BackupTool {
     }
 
     showLoading() {
-        $('#loadingModal').modal('show');
+        console.log('showLoading called'); // Debug
+        
+        // Alternative simple loading indicator
+        if (!$('#simple-loading').length) {
+            $('body').append(`
+                <div id="simple-loading" style="
+                    position: fixed; 
+                    top: 0; 
+                    left: 0; 
+                    width: 100%; 
+                    height: 100%; 
+                    background: rgba(0,0,0,0.5); 
+                    z-index: 9999; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center;
+                    color: white;
+                    font-size: 18px;
+                ">
+                    <div>
+                        <div class="spinner-border text-light" role="status"></div>
+                        <div class="mt-2">Memproses...</div>
+                    </div>
+                </div>
+            `);
+        }
+        
+        $('#simple-loading').show();
+        
+        // Also try Bootstrap modal as backup
+        if ($('#loadingModal').length) {
+            $('#loadingModal').modal('show');
+        }
+        
+        // Auto-hide loading after 30 seconds as fallback
+        if (this.loadingTimeout) {
+            clearTimeout(this.loadingTimeout);
+        }
+        this.loadingTimeout = setTimeout(() => {
+            this.hideLoading();
+        }, 30000);
     }
 
     hideLoading() {
-        $('#loadingModal').modal('hide');
+        console.log('hideLoading called'); // Debug
+        
+        // Clear timeout if exists
+        if (this.loadingTimeout) {
+            clearTimeout(this.loadingTimeout);
+            this.loadingTimeout = null;
+        }
+        
+        // Hide simple loading indicator
+        $('#simple-loading').hide().remove();
+        
+        // Multiple methods to ensure Bootstrap modal is hidden
+        const modal = $('#loadingModal');
+        if (modal.length) {
+            // Method 1: Bootstrap modal hide
+            modal.modal('hide');
+            
+            // Method 2: Force hide with CSS
+            modal.hide();
+            modal.removeClass('show');
+            modal.css('display', 'none');
+            
+            // Method 3: Remove modal-open class immediately
+            $('body').removeClass('modal-open');
+        }
+        
+        // Force cleanup multiple times to ensure it works
+        const forceCleanup = () => {
+            $('.modal-backdrop').remove();
+            $('body').removeClass('modal-open');
+            $('body').css('overflow', '');
+            $('body').css('padding-right', '');
+            $('#loadingModal').hide().removeClass('show').css('display', 'none');
+            $('#simple-loading').hide().remove();
+        };
+        
+        // Run cleanup immediately and with delays
+        forceCleanup();
+        setTimeout(forceCleanup, 50);
+        setTimeout(forceCleanup, 200);
+        setTimeout(forceCleanup, 500);
+        
+        console.log('hideLoading completed'); // Debug
     }
 
     showAlert(type, message) {
