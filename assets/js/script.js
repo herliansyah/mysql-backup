@@ -396,7 +396,9 @@ class BackupTool {
                             </div>
                         </div>
                         <div class="mt-2 limit-input" style="display: none;">
-                            <input type="number" class="form-control" placeholder="Jumlah rows" min="1" max="${tableData.rows}" id="limit-value-${tableName}">
+                            <label class="form-label small text-muted">Jumlah rows (default: ${Math.min(10, tableData.rows)})</label>
+                            <input type="number" class="form-control" placeholder="Masukkan jumlah rows" min="1" max="${tableData.rows}" value="${Math.min(10, tableData.rows)}" id="limit-value-${tableName}">
+                            <small class="text-muted">Maksimal: ${formatNumber(tableData.rows)} rows</small>
                         </div>
                     </div>
                 `;
@@ -481,9 +483,11 @@ class BackupTool {
             const option = $(`input[name="data-option-${tableName}"]:checked`).val();
             if (option === 'limit') {
                 const limitValue = $(`#limit-value-${tableName}`).val();
+                const tableData = this.databaseObjects.tables.find(t => t.name === tableName);
+                const defaultValue = Math.min(10, tableData ? tableData.rows : 10);
                 tableDataOptions[tableName] = {
                     type: 'limit',
-                    value: parseInt(limitValue) || 1000
+                    value: parseInt(limitValue) || defaultValue
                 };
             } else {
                 tableDataOptions[tableName] = {
