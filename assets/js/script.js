@@ -190,10 +190,11 @@ class BackupTool {
             });
 
             if (response.success) {
-                this.showAlert('success', 'Koneksi berhasil!');
+                this.showAlert('success', window.languageManager ? window.languageManager.t('connectionSuccess') : 'Connection successful!');
                 this.connectionData = formData;
             } else {
-                this.showAlert('danger', `Koneksi gagal: ${response.message}`);
+                const failedMsg = window.languageManager ? window.languageManager.t('connectionFailed') : 'Connection failed';
+                this.showAlert('danger', `${failedMsg}: ${response.message}`);
             }
         } catch (error) {
             this.showAlert('danger', 'Terjadi kesalahan saat menguji koneksi.');
@@ -715,7 +716,7 @@ class BackupTool {
                 ">
                     <div>
                         <div class="spinner-border text-light" role="status"></div>
-                        <div class="mt-2">Memproses...</div>
+                        <div class="mt-2">${window.languageManager ? window.languageManager.t('loading') : 'Loading...'}</div>
                     </div>
                 </div>
             `);
