@@ -1,0 +1,25 @@
+# Protect downloads directory
+Options -Indexes
+
+# Allow only SQL files to be downloaded
+<FilesMatch "\.(sql)$">
+    Order allow,deny
+    Allow from all
+</FilesMatch>
+
+# Deny access to other file types
+<FilesMatch "\.(?!sql$)[^.]+$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Set proper MIME type for SQL files
+<IfModule mod_mime.c>
+    AddType application/sql .sql
+    AddType text/plain .sql
+</IfModule>
+
+# Force download for SQL files
+<FilesMatch "\.sql$">
+    Header set Content-Disposition "attachment"
+</FilesMatch>

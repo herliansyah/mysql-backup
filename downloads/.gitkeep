@@ -1,0 +1,2 @@
+# This file ensures the downloads directory is tracked by Git
+# The directory is needed for the application to store backup files

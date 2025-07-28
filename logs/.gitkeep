@@ -1,0 +1,2 @@
+# This file ensures the logs directory is tracked by Git
+# The directory is needed for the application to store log files

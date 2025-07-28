@@ -1,0 +1,103 @@
+# MySQL Backup Tool - Git Ignore File
+
+# Backup files
+downloads/*.sql
+downloads/*.zip
+downloads/*.tar.gz
+
+# Log files
+logs/*.log
+logs/*.txt
+
+# Configuration files with sensitive data
+config/database.php
+config/local.php
+.env
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+tmp_rovodev_*
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# PHP specific
+vendor/
+composer.lock
+*.cache
+
+# Node.js (if using any build tools)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# System files
+.htaccess.bak
+.htpasswd
+error_log
+
+# Backup and archive files
+*.bak
+*.backup
+*.old
+*.orig
+
+# Large files that shouldn't be in repo
+*.sql.gz
+*.sql.zip
+*.dump
+
+# User uploaded files
+uploads/
+files/
+
+# Cache directories
+cache/
+cached/
+
+# Session files
+sessions/
+
+# Development files
+test.php
+debug.php
+phpinfo.php
+
+# Documentation build files
+docs/_build/
+docs/.doctrees/
+
+# Coverage reports
+coverage/
+*.coverage
+
+# Package files
+*.tar
+*.zip
+*.rar
+*.7z
+
+# Keep important directories but ignore their contents
+downloads/*
+!downloads/.htaccess
+!downloads/.gitkeep
+
+logs/*
+!logs/.gitkeep
+
+# Keep example files
+!examples/
+!examples/*
+
+# Keep README and documentation
+!README.md
+!LICENSE
+!CHANGELOG.md
