@@ -283,8 +283,10 @@ class BackupTool {
                 </div>
             `).join('');
             $('#tables-list').html(tablesHtml);
+            $('#select-all-tables').closest('.form-check').show();
         } else {
             $('#tables-list').html('<p class="text-muted text-center py-3"><i class="fas fa-info-circle"></i> Tidak ada tabel ditemukan</p>');
+            $('#select-all-tables').closest('.form-check').hide();
         }
 
         // Populate views
@@ -303,8 +305,10 @@ class BackupTool {
                 </div>
             `).join('');
             $('#views-list').html(viewsHtml);
+            $('#select-all-views').closest('.form-check').show();
         } else {
             $('#views-list').html('<p class="text-muted text-center py-3"><i class="fas fa-info-circle"></i> Tidak ada view ditemukan</p>');
+            $('#select-all-views').closest('.form-check').hide();
         }
 
         // Populate triggers
@@ -323,8 +327,10 @@ class BackupTool {
                 </div>
             `).join('');
             $('#triggers-list').html(triggersHtml);
+            $('#select-all-triggers').closest('.form-check').show();
         } else {
             $('#triggers-list').html('<p class="text-muted text-center py-3"><i class="fas fa-info-circle"></i> Tidak ada trigger ditemukan</p>');
+            $('#select-all-triggers').closest('.form-check').hide();
         }
 
         // Populate procedures
@@ -343,8 +349,10 @@ class BackupTool {
                 </div>
             `).join('');
             $('#procedures-list').html(proceduresHtml);
+            $('#select-all-procedures').closest('.form-check').show();
         } else {
             $('#procedures-list').html('<p class="text-muted text-center py-3"><i class="fas fa-info-circle"></i> Tidak ada procedure ditemukan</p>');
+            $('#select-all-procedures').closest('.form-check').hide();
         }
 
         // Populate functions
@@ -363,8 +371,10 @@ class BackupTool {
                 </div>
             `).join('');
             $('#functions-list').html(functionsHtml);
+            $('#select-all-functions').closest('.form-check').show();
         } else {
             $('#functions-list').html('<p class="text-muted text-center py-3"><i class="fas fa-info-circle"></i> Tidak ada function ditemukan</p>');
+            $('#select-all-functions').closest('.form-check').hide();
         }
 
         // Store data for later use
