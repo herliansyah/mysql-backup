@@ -128,7 +128,9 @@ class BackupTool {
     async validateAndProceed(currentStep) {
         switch(currentStep) {
             case 1:
-                if (await this.validateConnection()) {
+                const connectionValid = await this.validateConnection();
+                
+                if (connectionValid) {
                     await this.loadDatabaseObjects();
                     this.goToStep(2);
                 }
@@ -147,6 +149,7 @@ class BackupTool {
     }
 
     async validateConnection() {
+        
         const formData = {
             host: $('#host').val(),
             port: $('#port').val(),
@@ -160,9 +163,32 @@ class BackupTool {
             this.showAlert('danger', 'Harap lengkapi semua field yang diperlukan!');
             return false;
         }
+        
+        // Test connection before proceeding
+        this.showLoading();
+        
+        try {
+            const response = await $.ajax({
+                url: 'api/test-connection.php',
+                method: 'POST',
+                data: formData,
+                dataType: 'json'
+            });
 
-        this.connectionData = formData;
-        return true;
+            if (response.success) {
+                this.showAlert('success', 'Koneksi berhasil! Melanjutkan ke step berikutnya...');
+                this.connectionData = formData;
+                return true;
+            } else {
+                this.showAlert('danger', `Koneksi gagal: ${response.message}. Silakan perbaiki koneksi terlebih dahulu.`);
+                return false;
+            }
+        } catch (error) {
+            this.showAlert('danger', 'Terjadi kesalahan saat menguji koneksi. Silakan coba lagi.');
+            return false;
+        } finally {
+            this.hideLoading();
+        }
     }
 
     async testConnection() {
@@ -695,7 +721,6 @@ class BackupTool {
     }
 
     showLoading() {
-        console.log('showLoading called'); // Debug
         
         // Alternative simple loading indicator
         if (!$('#simple-loading').length) {
@@ -739,8 +764,6 @@ class BackupTool {
     }
 
     hideLoading() {
-        console.log('hideLoading called'); // Debug
-        
         // Clear timeout if exists
         if (this.loadingTimeout) {
             clearTimeout(this.loadingTimeout);
@@ -780,8 +803,6 @@ class BackupTool {
         setTimeout(forceCleanup, 50);
         setTimeout(forceCleanup, 200);
         setTimeout(forceCleanup, 500);
-        
-        console.log('hideLoading completed'); // Debug
     }
 
     showAlert(type, message) {
