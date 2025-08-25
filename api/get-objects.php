@@ -124,6 +124,7 @@ try {
             ROUTINE_DEFINITION as definition
         FROM information_schema.ROUTINES 
         WHERE ROUTINE_SCHEMA = ?
+        AND ROUTINE_TYPE = 'PROCEDURE'
         ORDER BY ROUTINE_NAME
     ");
     $stmt->execute([$database]);
